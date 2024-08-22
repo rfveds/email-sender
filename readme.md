@@ -19,7 +19,7 @@ This project is a Symfony application that allows sending emails to users by cat
     make build
     make start
     ```
-3. ** Copy the environment file from template**
+3. **Copy the environment file from template**
     ```sh
     cp .env.template .env.local
     ```
