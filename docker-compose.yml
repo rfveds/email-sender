@@ -9,6 +9,8 @@ services:
       - ./app:/home/wwwroot/app
     depends_on:
       - php
+    networks:
+      - symfony_network
 
   mysql:
     image: mysql:8.3
@@ -20,6 +22,8 @@ services:
       MYSQL_DATABASE: symfony
       MYSQL_USER: symfony
       MYSQL_PASSWORD: symfony
+    networks:
+      - symfony_network
 
   mysql_test:
     image: mysql:8.3
@@ -31,21 +35,29 @@ services:
       MYSQL_DATABASE: symfony_test
       MYSQL_USER: symfony_test
       MYSQL_PASSWORD: symfony_test
+    networks:
+      - symfony_network
 
   php:
     build: .docker/php
     container_name: symfony_php
     volumes:
       - ./app:/home/wwwroot/app
-    environment:
-      - maildev_host=symfony_maildev
     depends_on:
-      - maildev
+      - mailhog
       - mysql
+    networks:
+      - symfony_network
 
-  maildev:
-    image: djfarrelly/maildev
-    container_name: symfony_maildev
+  mailhog:
+    image: mailhog/mailhog
+    container_name: symfony_mailhog
     ports:
-      - "1080:1080"
+      - "8025:8025"
       - "1025:1025"
+    networks:
+      - symfony_network
+
+networks:
+  symfony_network:
+    driver: bridge

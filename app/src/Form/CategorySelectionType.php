@@ -16,10 +16,12 @@ class CategorySelectionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('category', EntityType::class, [
+            ->add('categories', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => 'name',
-                'placeholder' => 'Choose a category',
+                'placeholder' => 'Choose categories',
+                'multiple' => true,
+                'expanded' => true,
             ])
             ->add('message', TextareaType::class, [
                 'label' => 'Message',

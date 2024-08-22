@@ -6,7 +6,8 @@ RUN apt-get update && \
     build-essential locales acl mailutils wget nodejs zip unzip \
     gnupg gnupg1 gnupg2 \
     zlib1g-dev \
-    sudo
+    sudo \
+    telnet
 
 # Install gd extension
 RUN apt-get update && \
@@ -39,6 +40,24 @@ mv composer.phar /usr/local/bin/composer
 # Install Symfony CLI
 RUN	wget https://get.symfony.com/cli/installer -O - | bash && \
     mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
+
+# Install supervisor
+RUN apt-get update && apt-get install -y supervisor
+
+# Create supervisor configuration directory
+RUN mkdir -p /etc/supervisor/conf.d/
+
+# Copy supervisor configuration
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Setup php.ini
+COPY php.ini /usr/local/etc/php/php.ini
+COPY php-fpm-pool.conf /usr/local/etc/php/pool.d/www.conf
+
+# Install Symfony CLI
+RUN wget https://get.symfony.com/cli/installer -O - | bash && \
+    mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
+
 
 # Install xdebug
 RUN docker-php-source extract
@@ -81,4 +100,6 @@ WORKDIR /home/wwwroot/
 ##</romaricp>##
 
 EXPOSE 9000
-CMD ["php-fpm"]
+
+# Set the CMD to run supervisord
+CMD ["/usr/bin/supervisord"]

@@ -21,9 +21,3 @@ migrate:
 # Load database fixtures
 fixtures:
 	docker-compose exec php bash -c "cd app &&  php bin/console doctrine:fixtures:load --no-interaction"
-
-## Run tests
-#test:
-#	docker-compose run --rm php ./vendor/bin/phpunit
-
-

@@ -1,9 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Send Emails</h1>
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">Send Emails</button>
-    {{ form_end(form) }}
+    <div class="d-flex justify-content-center align-items-start vh-100">
+        <div class="w-50">
+            <h1 class="text-center">{{ 'title.email_send'|trans }}</h1>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <div class="form-group row float-sm-right">
+                <input type="submit" value="{{ 'action.send'|trans }}" class="btn btn-primary"/>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}

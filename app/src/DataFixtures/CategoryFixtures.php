@@ -10,7 +10,7 @@ class CategoryFixtures extends AbstractBaseFixtures
 {
     public function loadData(): void
     {
-        $this->createMany(20, 'categories', function () {
+        $this->createMany(5, 'categories', function () {
             $category = new Category();
             $category->setName($this->faker->unique()->word);
 

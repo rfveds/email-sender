@@ -4,57 +4,35 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Contracts\EmailServiceInterface;
 use App\Form\CategorySelectionType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @throws TransportExceptionInterface
-     */
+    public function __construct(
+        private readonly EmailServiceInterface $emailService,
+        private readonly UserRepository $userRepository,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/', name: 'send_emails')]
-    public function sendEmails(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
+    public function sendEmails(Request $request): Response
     {
         $form = $this->createForm(CategorySelectionType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $category = $form->get('category')->getData();
-            $users = $entityManager->getRepository(User::class)->createQueryBuilder('u')
-                ->innerJoin('u.categories', 'c')
-                ->where('c IN (:categories)')
-                ->setParameter('categories', $category)
-                ->getQuery()
-                ->getResult();
+            $users = $this->userRepository->findByCategories($form->get('categories')->getData()->toArray());
+            $this->emailService->sendEmails($users, $form->get('message')->getData());
 
-            foreach ($users as $user) {
-                $email = (new Email())
-                    ->from('send@example.com')
-                    ->to($user->getEmail())
-                    ->subject('Hello Email')
-                    ->html(
-                        $this->renderView(
-                            'emails/content.html.twig',
-                            [
-                                'firstName' => $user->getFirstName(),
-                                'lastName' => $user->getLastName(),
-                                'message' => $form->get('message')->getData(),
-                            ]
-                        )
-                    );
-
-                $mailer->send($email);
-            }
-
-            $this->addFlash('success', 'Emails sent successfully!');
+            $this->addFlash('success', $this->translator->trans('message.emails_send'));
 
             return $this->redirectToRoute('send_emails');
         }
