@@ -11,13 +11,17 @@ This project is a Symfony application that allows sending emails to users by cat
 
 1. **Clone the repository:**
    ```sh
-   git clone <repository-url>
+   git clone https://github.com/rfveds/email-sender.git <repository-directory>
    cd <repository-directory>
     ```
 2. **Build and start the Docker services:**
     ```sh
     make build
     make start
+    ```
+3. ** Copy the environment file from template**
+    ```sh
+    cp .env.template .env.local
     ```
 3. **Install PHP dependencies using Composer:**
    ```sh
