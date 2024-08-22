@@ -25,19 +25,6 @@ services:
     networks:
       - symfony_network
 
-  mysql_test:
-    image: mysql:8.3
-    ports:
-      - "3318:3306"
-    container_name: symfony_mysql_test
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: symfony_test
-      MYSQL_USER: symfony_test
-      MYSQL_PASSWORD: symfony_test
-    networks:
-      - symfony_network
-
   php:
     build: .docker/php
     container_name: symfony_php
